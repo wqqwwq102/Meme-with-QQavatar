@@ -1,3 +1,4 @@
+import argparse
 import os
 import requests
 import time
@@ -11,6 +12,7 @@ class DrawTool:
         self.basePath = os.path.dirname(os.path.realpath(__file__))
         self.drawPath = os.path.join(self.basePath, "draw")
         self.resultDirPath = os.path.join(self.basePath, "result")
+        # self.resultDirPath = os.path.join("/home/app/cq/data/images", "result")
         if not os.path.exists(self.resultDirPath):
             os.mkdir(self.resultDirPath)
         self.avatarDirPath = os.path.join(self.drawPath, "avatar")
@@ -651,54 +653,110 @@ class DrawTool:
         return None
 
 
-def test():
-    testQQNum = 2150631695
-
-    # 格式应为：丢[@QQ号] 或者 丢QQ号
-    # 其中的 "丢" 表示要画 "丢" 这张图，可以换成其他指令
-    # 之所以支持 "[@QQ号]" 的格式是因为在大多数 qqbot 框架中，消息中的艾特是这种格式
-
-    testCommand = [
-        "丢{}".format(testQQNum),
-        "仰望大佬{}".format(testQQNum),
-        "打拳{}".format(testQQNum),
-        "打{}".format(testQQNum),
-        "摸头{}".format(testQQNum),
-        "摸鱼{}".format(testQQNum),
-        "摸{}".format(testQQNum),
-        "敲{}".format(testQQNum),
-        "赞{}".format(testQQNum),
-        "旋转{}".format(testQQNum),
-        "吃{}".format(testQQNum),
-        "吞{}".format(testQQNum),
-        "咬[@{}]".format(testQQNum),
-        "快逃[@{}]".format(testQQNum),
-        "色色[@{}]".format(testQQNum),
-        "舔[@{}]".format(testQQNum),
-        "拍[@{}]".format(testQQNum),
-        "爬[@{}]".format(testQQNum),
-        "推[@{}]".format(testQQNum),
-        "踢[@{}]".format(testQQNum),
-        "捂脸[@{}]".format(testQQNum),
-        "踩[@{}]".format(testQQNum),
-        "脆弱{}".format(testQQNum),
-        "吸{}".format(testQQNum),
-        "好玩{}".format(testQQNum),
-        "贴贴{}".format(testQQNum),
-        "弹{}".format(testQQNum),
-        "致电{}".format(testQQNum),
-        "需要{}".format(testQQNum),
-        "扭{}".format(testQQNum),
-        "看到{}".format(testQQNum),
-    ]
-
-    tool = DrawTool()
-    for command in testCommand:
-        result = tool.wantDraw(command)
-        if result is not None:
-            # 如果成功的话，将拿到一个数组，里面是每个结果图片的本地绝对路径，有的命令会生成多张图
-            print(result)
-
+# def test():
+#     testQQNum = 1040321249
+#
+#     # 格式应为：丢[@QQ号] 或者 丢QQ号
+#     # 其中的 "丢" 表示要画 "丢" 这张图，可以换成其他指令
+#     # 之所以支持 "[@QQ号]" 的格式是因为在大多数 qqbot 框架中，消息中的艾特是这种格式
+#
+#     testCommand = [
+#         "丢{}".format(testQQNum),
+#         "仰望大佬{}".format(testQQNum),
+#         "打拳{}".format(testQQNum),
+#         "打{}".format(testQQNum),
+#         "摸头{}".format(testQQNum),
+#         "摸鱼{}".format(testQQNum),
+#         "摸{}".format(testQQNum),
+#         "敲{}".format(testQQNum),
+#         "赞{}".format(testQQNum),
+#         "旋转{}".format(testQQNum),
+#         "吃{}".format(testQQNum),
+#         "吞{}".format(testQQNum),
+#         "咬[@{}]".format(testQQNum),
+#         "快逃[@{}]".format(testQQNum),
+#         "色色[@{}]".format(testQQNum),
+#         "舔[@{}]".format(testQQNum),
+#         "拍[@{}]".format(testQQNum),
+#         "爬[@{}]".format(testQQNum),
+#         "推[@{}]".format(testQQNum),
+#         "踢[@{}]".format(testQQNum),
+#         "捂脸[@{}]".format(testQQNum),
+#         "踩[@{}]".format(testQQNum),
+#         "脆弱{}".format(testQQNum),
+#         "吸{}".format(testQQNum),
+#         "好玩{}".format(testQQNum),
+#         "贴贴{}".format(testQQNum),
+#         "弹{}".format(testQQNum),
+#         "致电{}".format(testQQNum),
+#         "需要{}".format(testQQNum),
+#         "扭{}".format(testQQNum),
+#         "看到{}".format(testQQNum),
+#     ]
+#
+#     tool = DrawTool()
+#     for command in testCommand:
+#         result = tool.wantDraw(command)
+#         if result is not None:
+#             # 如果成功的话，将拿到一个数组，里面是每个结果图片的本地绝对路径，有的命令会生成多张图
+#             print(result)
+actions=["丢",
+        "仰望大佬",
+        "打拳",
+        "打",
+        "摸头",
+        "摸鱼",
+        "摸",
+        "敲",
+        "赞",
+        "旋转",
+        "吃",
+        "吞",
+        "咬",
+        "快逃",
+        "色色",
+        "舔",
+        "拍",
+        "爬",
+        "推",
+        "踢",
+        "捂脸",
+        "踩",
+        "脆弱",
+        "吸",
+        "好玩",
+        "贴贴",
+        "弹",
+        "致电",
+        "需要",
+        "扭",
+        "看到"]
+parser = argparse.ArgumentParser()
+parser.add_argument('--qq', default=None, required=True, type=str, help="qq")
+parser.add_argument('--action', default=None, required=True, type=str, help="动作")
+parser.add_argument('--group_id', default=None, required=True, type=str, help="动作")
 
 if __name__ == "__main__":
-    test()
+    # tool = DrawTool()
+    # result = tool.wantDraw("扭[@1040321249]")
+    args = parser.parse_args()
+    qq = args.qq
+    action = args.action
+    group_id = args.group_id
+    print(qq+action+group_id)
+    if action in actions:
+        command = "{}[@{}]".format(action,qq)
+        print(command)
+        tool = DrawTool()
+        result = tool.wantDraw(command)
+        if result != None and len(result)>0:
+            message = "[CQ:image,file=result/{}]".format(os.path.basename(result[0]))
+            print(message)
+            body = {
+                "group_id": group_id,
+                "message": message
+            }
+            post = requests.post("http://127.0.0.1:5700/send_group_msg", json=body)
+            print(post.content)
+
+
